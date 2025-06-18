@@ -1,6 +1,7 @@
 package Biblioteca;
 
 import Interface.I_MostrableEnMenu;
+import Enum.TipoUsuario;
 
 public abstract class Usuario implements I_MostrableEnMenu {
 
@@ -9,6 +10,15 @@ public abstract class Usuario implements I_MostrableEnMenu {
     protected String dni;
     protected String direccion;
     protected String contacto;
+    private TipoUsuario tipo;
+
+    public Usuario(String nombre, String dni, String direccion, String contacto, TipoUsuario tipo) {
+        this.nombre = nombre;
+        this.dni = dni;
+        this.direccion = direccion;
+        this.contacto = contacto;
+        this.tipo = tipo;
+    }
 
     /// Contructor
     public Usuario(String nombre, String dni) {
@@ -21,6 +31,8 @@ public abstract class Usuario implements I_MostrableEnMenu {
         this.direccion=direccion;
         this.contacto= contacto;
     }
+
+
 
     /// Getters
     public String getNombre() {
@@ -39,8 +51,14 @@ public abstract class Usuario implements I_MostrableEnMenu {
         return contacto;
     }
 
+    public TipoUsuario getTipo() {
+        return tipo;
+    }
+
+
     /// Método Abstracto
     public abstract void ejecutarMenu();
+
 
     /// toString
     @Override
@@ -50,4 +68,6 @@ public abstract class Usuario implements I_MostrableEnMenu {
                 ", dni='" + dni + '\'' +
                 '}';
     }
+
+
 }

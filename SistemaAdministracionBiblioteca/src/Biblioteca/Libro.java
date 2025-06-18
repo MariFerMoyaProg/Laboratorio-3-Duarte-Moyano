@@ -2,13 +2,14 @@ package Biblioteca;
 
 import Interface.I_Buscable;
 
+import Interface.Prestamoable;
 import org.omg.PortableServer.IMPLICIT_ACTIVATION_POLICY_ID;
 
 import Enum.Genero;
 
 
 
-public class Libro implements I_Buscable {
+public class Libro implements I_Buscable, Prestamoable {
 
     /// Establecimos los atributos de la clase
 
@@ -42,6 +43,11 @@ public class Libro implements I_Buscable {
         return disponible;
     }
 
+    /// Setters
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
 
     ///  metodos especificos
 
