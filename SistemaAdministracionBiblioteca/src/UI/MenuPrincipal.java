@@ -1,53 +1,105 @@
 package UI;
 
 import Biblioteca.*;
+import Enum.TipoUsuario;
+import Excepcion.UsuarioNoEncontradoException;
+import Interface.I_MostrableEnMenu;
+import Persistencia.ExportadorJson;
+import Persistencia.ImportadorJson;
+import UI.*;
 
+import java.io.IOException;
 import java.util.Scanner;
 
-public class MenuPrincipal {
+import static Enum.TipoUsuario.*;
 
-    /// Creación de método para mostrar las opciones iniciales de logueo
+public class MenuPrincipal implements I_MostrableEnMenu {
+    private GestorUsuarios gestorUsuarios;
+    private GestorLibros gestorLibros;
+    private GestorPrestamo gestorPrestamos;
+    private GestorReserva gestorReservas;
+    private Scanner scanner;
 
-    public static void mostrar(){
+    public MenuPrincipal() {
+        gestorUsuarios = new GestorUsuarios();
+        gestorLibros = new GestorLibros();
+        gestorPrestamos = new GestorPrestamo();
+        gestorReservas = new GestorReserva();
+        scanner = new Scanner(System.in);
 
-        Scanner sc = new Scanner(System.in);
+        cargarDatos();
+    }
 
-        /// Muestro por pantalla las opciones al usuario
-        System.out.println("========== Sistema de Biblioteca ========");
-        System.out.println("Seleccione tipo de usuario: ");
-        System.out.println(" 1 - Administrador");
-        System.out.println(" 2 - Bibliotecario");
-        System.out.println(" 3 - Usuario (Lector)");
-        System.out.println("Ingrese una opción: ");
+    private void cargarDatos() {
+        try {
+            gestorUsuarios.getUsuarios().addAll(ImportadorJson.importarUsuarios("usuarios.json"));
+            gestorLibros.getLibros().addAll(ImportadorJson.importarLibros("libros.json"));
+            gestorPrestamos.getPrestamos().addAll(ImportadorJson.importarPrestamos("prestamos.json", gestorLibros, gestorUsuarios));
+            gestorReservas.getReservas().addAll(ImportadorJson.importarReservas("reservas.json", gestorLibros, gestorUsuarios));
+        } catch (IOException e) {
+            System.out.println("Error al cargar datos: " + e.getMessage());
+        }
+    }
 
-        int opcion= sc.nextInt();
-        sc.nextLine();
+    private void guardarDatos() {
+        try {
+            ExportadorJson.exportarUsuarios(gestorUsuarios.getUsuarios(), "usuarios.json");
+            ExportadorJson.exportarLibros(gestorLibros.getLibros(), "libros.json");
+            ExportadorJson.exportarPrestamos(gestorPrestamos.getPrestamos(), "prestamos.json");
+            ExportadorJson.exportarReservas(gestorReservas.getReservas(), "reservas.json");
+        } catch (IOException e) {
+            System.out.println("Error al guardar datos: " + e.getMessage());
+        }
+    }
 
-        Usuario usuario = null;
+    private Usuario login() {
+        System.out.println("Ingrese DNI:");
+        String dni = scanner.nextLine();
+        try {
+            Usuario usuario = gestorUsuarios.buscarUsuarioPorDni(dni);
+            System.out.println("Bienvenido, " + usuario.getNombre());
+            return usuario;
+        } catch (UsuarioNoEncontradoException e) {
+            System.out.println("Usuario no encontrado.");
+            return null;
+        }
+    }
 
-        System.out.println("Ingrese su nombre: ");
-        String nombre= sc.nextLine();
+    @Override
+    public void ejecutarMenu() {
+        while (true) {
+            System.out.println("\n--- Menú Principal ---");
+            System.out.println("1. Iniciar sesión");
+            System.out.println("2. Salir");
+            System.out.print("Seleccione opción: ");
+            String opcion = scanner.nextLine();
 
-        System.out.println("Ingrese su DNI (8 dígitos): ");
-        String dni = sc.nextLine();
+            if (opcion.equals("1")) {
+                Usuario usuario = login();
+                if (usuario != null) {
+                    switch (usuario.getTipo()) {
+                        case ADMINISTRADOR:
+                            new MenuAdministrador(gestorUsuarios, gestorLibros, gestorPrestamos, gestorReservas, scanner).ejecutarMenu();
+                            break;
+                        case BIBLIOTECARIO:
+                            new UI.MenuMiBibliotecario (gestorLibros, gestorPrestamos, gestorReservas, scanner).ejecutarMenu();
 
-        try{
-            if (opcion == 1){
-                usuario= new Administrador (nombre, dni);
-            }else if (opcion == 2){
-                usuario = new Bibliotecario (nombre, dni);
-            } else if (opcion == 3) {
-                usuario= new Lector(nombre,dni);
-            }else{
-                System.out.println("Opción inválida");
-                return;
+                            break;
+                        case LECTOR:
+                            new ui.MenuLector(gestorLibros, gestorPrestamos, gestorReservas, usuario, scanner).ejecutarMenu();
+                            break;
+                        default:
+                            System.out.println("Tipo de usuario no reconocido.");
+                            break;
+                    }
+                }
+            } else if (opcion.equals("2")) {
+                guardarDatos();
+                System.out.println("Saliendo...");
+                break;
+            } else {
+                System.out.println("Opción inválida.");
             }
-
-            ///System.out.println("\nBienvenido/a, ") + usuario.usuario.getNombre());
-            ///usuario,mostrarOpciones();
-
-        }catch (IllegalArgumentException ex){
-            System.out.println("Error: "+ex.getMessage());
         }
     }
 }

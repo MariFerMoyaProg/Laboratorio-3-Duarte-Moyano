@@ -1,12 +1,15 @@
 package Biblioteca;
 
+import Enum.TipoUsuario;
+
 public class Bibliotecario extends Usuario{
 
-    ///  Constructor
-
-    public Bibliotecario(String nombre, String dni) {
-        super(nombre, dni);
+    public Bibliotecario(String nombre, String dni, String direccion, String contacto, TipoUsuario tipo) {
+        super(nombre, dni, direccion, contacto, tipo);
     }
+
+
+
 
     /// Implementacion de método
 
