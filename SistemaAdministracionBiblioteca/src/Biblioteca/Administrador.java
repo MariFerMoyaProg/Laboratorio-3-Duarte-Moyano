@@ -1,11 +1,13 @@
 package Biblioteca;
 
-public class Administrador extends Usuario {
+import Enum.TipoUsuario;
 
+public class Administrador extends Usuario {
 
     /// Constructor
     public Administrador(String nombre, String dni) {
         super(nombre, dni);
+        this.setTipo(TipoUsuario.ADMINISTRADOR);
     }
 
 

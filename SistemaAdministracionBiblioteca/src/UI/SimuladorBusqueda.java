@@ -24,7 +24,7 @@ public class SimuladorBusqueda {
 
         boolean encontrado = false;
         for (I_Buscable item : catalogo) {
-            if (item.coincideCon(termino)) {
+            if (item.coincide(termino)) {
                 System.out.println(item);
                 encontrado = true;
             }

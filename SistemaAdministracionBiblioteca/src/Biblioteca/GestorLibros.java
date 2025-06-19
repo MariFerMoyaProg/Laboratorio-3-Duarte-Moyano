@@ -19,7 +19,7 @@ import java.util.List;
         public List<Libro> buscarLibros(String criterio) {
             List<Libro> encontrados = new ArrayList<>();
             for (Libro libro : libros) {
-                if (libro.coincideCon(criterio)) {
+                if (libro.coincide(criterio)) {
                     encontrados.add(libro);
                 }
             }

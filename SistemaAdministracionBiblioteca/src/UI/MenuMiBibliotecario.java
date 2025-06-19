@@ -1,4 +1,3 @@
-
 package UI;
 
 import Biblioteca.*;
@@ -6,14 +5,13 @@ import Excepcion.LibroNoDisponibleException;
 import Interface.I_MostrableEnMenu;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Scanner;
 
 public class MenuMiBibliotecario implements I_MostrableEnMenu {
-    private GestorLibros gestorLibros;
-    private GestorPrestamo gestorPrestamos;
-    private GestorReserva gestorReservas;
-    private Scanner scanner;
+    private final GestorLibros gestorLibros;
+    private final GestorPrestamo gestorPrestamos;
+    private final GestorReserva gestorReservas;
+    private final Scanner scanner;
 
     public MenuMiBibliotecario(GestorLibros gl, GestorPrestamo gp, GestorReserva gr, Scanner scanner) {
         this.gestorLibros = gl;
