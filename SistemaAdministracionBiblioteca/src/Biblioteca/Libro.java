@@ -8,7 +8,7 @@ public  class Libro implements I_Buscable, Prestamoable {
     private final String titulo;
     private final String autor;
     private final Genero genero;
-    private  boolean disponible;
+    private  boolean disponible= true;
 
     public Libro(String titulo, String autor, Genero genero) {
         this.titulo = titulo;

@@ -1,5 +1,7 @@
 package Biblioteca;
 
+import Excepcion.LibroNoDisponibleException;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,5 +46,13 @@ public class GestorPrestamo {
             }
         }
         return true;
+    }
+    public void registrarPrestamo(Libro libro, Usuario usuario) throws LibroNoDisponibleException {
+        if (!libro.estaDisponible()) {
+            throw new LibroNoDisponibleException("El libro no está disponible para préstamo.");
+        }
+        Prestamo nuevoPrestamo = new Prestamo(libro, usuario, LocalDate.now(), null); // o con fecha devolución que corresponda
+        prestamos.add(nuevoPrestamo);
+        libro.setDisponible(false);
     }
 }

@@ -2,6 +2,7 @@ package UI;
 
 import Biblioteca.*;
 import Excepcion.LibroNoDisponibleException;
+import Excepcion.LibroNoEncontradoExcepcion;
 import Interface.I_MostrableEnMenu;
 
 import java.time.LocalDate;
@@ -9,11 +10,13 @@ import java.util.Scanner;
 
 public class MenuMiBibliotecario implements I_MostrableEnMenu {
     private final GestorLibros gestorLibros;
+    private final GestorUsuarios gestorUsuarios;
     private final GestorPrestamo gestorPrestamos;
     private final GestorReserva gestorReservas;
     private final Scanner scanner;
 
-    public MenuMiBibliotecario(GestorLibros gl, GestorPrestamo gp, GestorReserva gr, Scanner scanner) {
+    public MenuMiBibliotecario(GestorUsuarios gu, GestorLibros gl, GestorPrestamo gp, GestorReserva gr, Scanner scanner) {
+        this.gestorUsuarios=gu;
         this.gestorLibros = gl;
         this.gestorPrestamos = gp;
         this.gestorReservas = gr;
@@ -39,7 +42,11 @@ public class MenuMiBibliotecario implements I_MostrableEnMenu {
                     listarLibros();
                     break;
                 case "2":
-                    realizarPrestamo();
+                    try {
+                        realizarPrestamo();
+                    } catch (LibroNoEncontradoExcepcion e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 case "3":
                     registrarDevolucion();
@@ -51,6 +58,9 @@ public class MenuMiBibliotecario implements I_MostrableEnMenu {
                     listarReservas();
                     break;
                 case "6":
+                    System.out.println("Los datos no estan disponibles en este momento");
+                    return;
+                case "7":
                     return;
                 default:
                     System.out.println("Opción inválida");
@@ -66,37 +76,48 @@ public class MenuMiBibliotecario implements I_MostrableEnMenu {
         }
     }
 
-    private void realizarPrestamo() {
+    public void realizarPrestamo() throws LibroNoEncontradoExcepcion  {
         try {
-            System.out.print("Título del libro a prestar: ");
+            System.out.print("Ingrese título del libro a prestar: ");
             String titulo = scanner.nextLine();
-            Libro libro = gestorLibros.buscarLibroPorTitulo(titulo);
+
+            Libro libro = gestorLibros.buscarLibroPorTitulo(titulo);  /// lanza excepción
+
             if (!libro.estaDisponible()) {
-                System.out.println("El libro no está disponible para préstamo.");
-                return;
+                throw new LibroNoDisponibleException("El libro no está disponible para préstamo.");
             }
 
             System.out.print("DNI del usuario que solicita el préstamo: ");
             String dni = scanner.nextLine();
 
-            // Para simplificar se asume que el usuario es lector
-            Usuario usuario = new GestorUsuarios().buscarUsuarioPorDni(dni);
+            Usuario usuario = gestorUsuarios.buscarUsuarioPorDni(dni);
+            if (usuario == null) {
+                System.out.println("Usuario no encontrado.");
+                return;
+            }
 
             System.out.print("Fecha préstamo (YYYY-MM-DD): ");
             LocalDate fechaPrestamo = LocalDate.parse(scanner.nextLine());
             System.out.print("Fecha devolución (YYYY-MM-DD): ");
             LocalDate fechaDevolucion = LocalDate.parse(scanner.nextLine());
-
+/// Registrar el préstamo
             Prestamo prestamo = new Prestamo(libro, usuario, fechaPrestamo, fechaDevolucion);
             gestorPrestamos.agregarPrestamo(prestamo);
+            libro.setDisponible(false);
+
             System.out.println("Préstamo registrado exitosamente.");
 
+        } catch (LibroNoEncontradoExcepcion e) {
+        System.out.println("Libro no encontrado: " + e.getMessage());
+        return;
         } catch (LibroNoDisponibleException e) {
-            System.out.println(e.getMessage());
-        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
         }
     }
+
+
 
     private void registrarDevolucion() {
         System.out.print("Título del libro a devolver: ");

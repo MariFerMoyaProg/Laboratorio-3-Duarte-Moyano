@@ -1,7 +1,7 @@
 package Biblioteca;
 
 
-import Excepcion.LibroNoDisponibleException;
+import Excepcion.LibroNoEncontradoExcepcion;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +25,15 @@ import java.util.List;
             }
             return encontrados;
         }
-
-        public Libro buscarLibroPorTitulo(String titulo) throws LibroNoDisponibleException {
+        public Libro buscarLibroPorTitulo(String titulo) throws LibroNoEncontradoExcepcion {
             for (Libro libro : libros) {
                 if (libro.getTitulo().equalsIgnoreCase(titulo)) {
                     return libro;
                 }
             }
-            throw new LibroNoDisponibleException("No se encontró el libro con título: " + titulo);
+            throw new LibroNoEncontradoExcepcion("No se encontró el libro con título: " + titulo);
         }
+
 
         public List<Libro> getLibros() {
             return libros;

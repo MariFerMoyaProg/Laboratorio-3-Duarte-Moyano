@@ -1,5 +1,6 @@
 package Persistencia;
 
+import Excepcion.LibroNoEncontradoExcepcion;
 import com.google.gson.GsonBuilder;
 
 import java.io.FileReader;
@@ -58,7 +59,7 @@ public class ImportadorJson {
         }
     }
 
-    public static List<Prestamo> importarPrestamos(String rutaArchivo, GestorLibros gestorLibros, GestorUsuarios gestorUsuarios) throws IOException {
+    public static List<Prestamo> importarPrestamos(String rutaArchivo, GestorLibros gestorLibros, GestorUsuarios gestorUsuarios) throws IOException, Excepcion.LibroNoDisponibleException, Excepcion.UsuarioNoEncontradoException {
         try (Reader reader = new FileReader(rutaArchivo)) {
             JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
             List<Prestamo> prestamos = new ArrayList<>();
@@ -68,7 +69,12 @@ public class ImportadorJson {
                 String usuarioDni = obj.get("usuarioDni").getAsString();
                 LocalDate fechaPrestamo = LocalDate.parse(obj.get("fechaPrestamo").getAsString());
                 LocalDate fechaDevolucion = LocalDate.parse(obj.get("fechaDevolucion").getAsString());
-                Libro libro = gestorLibros.buscarLibroPorTitulo(libroTitulo);
+                Libro libro = null;
+                try {
+                    libro = gestorLibros.buscarLibroPorTitulo(libroTitulo);
+                } catch (LibroNoEncontradoExcepcion e) {
+                    throw new RuntimeException(e);
+                }
                 Usuario usuario = gestorUsuarios.buscarUsuarioPorDni(usuarioDni);
                 prestamos.add(new Prestamo(libro, usuario, fechaPrestamo, fechaDevolucion));
                 libro.setDisponible(false);
@@ -76,8 +82,6 @@ public class ImportadorJson {
             return prestamos;
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
-        } catch (Excepcion.LibroNoDisponibleException | Excepcion.UsuarioNoEncontradoException e) {
-            throw new IOException("Error al importar préstamos: " + e.getMessage());
         }
     }
 
@@ -90,14 +94,19 @@ public class ImportadorJson {
                 String libroTitulo = obj.get("libroTitulo").getAsString();
                 String usuarioDni = obj.get("usuarioDni").getAsString();
                 LocalDate fechaReserva = LocalDate.parse(obj.get("fechaReserva").getAsString());
-                Libro libro = gestorLibros.buscarLibroPorTitulo(libroTitulo);
+                Libro libro = null;
+                try {
+                    libro = gestorLibros.buscarLibroPorTitulo(libroTitulo);
+                } catch (LibroNoEncontradoExcepcion e) {
+                    throw new RuntimeException(e);
+                }
                 Usuario usuario = gestorUsuarios.buscarUsuarioPorDni(usuarioDni);
                 reservas.add(new Reserva(libro, usuario, fechaReserva));
             }
             return reservas;
         } catch (FileNotFoundException e) {
             return new ArrayList<>();
-        } catch (Excepcion.LibroNoDisponibleException | Excepcion.UsuarioNoEncontradoException e) {
+        } catch (Excepcion.UsuarioNoEncontradoException e) {
             throw new IOException("Error al importar reservas: " + e.getMessage());
         }
     }
