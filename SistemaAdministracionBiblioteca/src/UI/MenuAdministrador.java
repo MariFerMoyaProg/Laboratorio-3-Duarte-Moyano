@@ -77,8 +77,12 @@ public class MenuAdministrador implements I_MostrableEnMenu {
 
                 }
             };
-            gestorUsuarios.agregarUsuario(usuario);
-            System.out.println("Usuario registrado con éxito.");
+            boolean agregado = gestorUsuarios.agregarUsuario(usuario);
+            if (agregado) {
+                System.out.println("Usuario registrado con exito.");
+            } else {
+                System.out.println("Ya existe un usuario con ese DNI.");
+            }
         } catch (IllegalArgumentException e) {
             System.out.println("Tipo de usuario inválido.");
         }
@@ -107,8 +111,10 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             System.out.println("Género inválido.");
         }
     }
+    
 
-    private void listarLibros() {
+
+        private void listarLibros() {
         System.out.println("\nLibros registrados:");
         for (Libro libro : gestorLibros.getLibros()) {
             System.out.println(libro);

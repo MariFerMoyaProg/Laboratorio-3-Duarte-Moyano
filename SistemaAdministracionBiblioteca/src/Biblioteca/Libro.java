@@ -3,7 +3,7 @@ package Biblioteca;
 import Interface.I_Buscable;
 
 import Interface.Prestamoable;
-import org.omg.PortableServer.IMPLICIT_ACTIVATION_POLICY_ID;
+///import org.omg.PortableServer.IMPLICIT_ACTIVATION_POLICY_ID;
 
 import Enum.Genero;
 
@@ -49,7 +49,7 @@ public class Libro implements I_Buscable, Prestamoable {
         this.disponible = disponible;
     }
 
-    ///  metodos especificos
+    ///  Metodos especificos
 
     public void prestar(){
         if(!disponible){/// en el caso de que nuestro libro no este dispoonible envia mensaje avisando

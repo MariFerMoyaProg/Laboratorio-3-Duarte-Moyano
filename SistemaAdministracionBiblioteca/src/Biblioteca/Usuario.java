@@ -20,7 +20,7 @@ public abstract class Usuario implements I_MostrableEnMenu {
         this.tipo = tipo;
     }
 
-    /// Contructor
+    /// Constructor
     public Usuario(String nombre, String dni) {
 
        if(!dni.matches("//d{7,8}")){

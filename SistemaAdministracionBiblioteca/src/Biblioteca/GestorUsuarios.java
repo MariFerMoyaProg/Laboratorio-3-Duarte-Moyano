@@ -12,9 +12,15 @@ public class GestorUsuarios {
         usuarios = new ArrayList<>();
     }
 
-    public void agregarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
-    }
+    public boolean agregarUsuario(Usuario usuario) {
+        try {
+            buscarUsuarioPorDni(usuario.getDni());
+            System.out.println("Ya existe un usuario con ese DNI.");
+            return false;
+        } catch (UsuarioNoEncontradoException e) {
+            usuarios.add(usuario);
+            return true;
+    }}
 
     public Usuario buscarUsuarioPorDni(String dni) throws UsuarioNoEncontradoException {
         for (Usuario u : usuarios) {
