@@ -11,7 +11,6 @@ public class Administrador extends Usuario {
     }
 
 
-    /// Implementacion de metodo
     @Override
     public void ejecutarMenu() {
         System.out.println("Mostrando Menu de Administrador...");
