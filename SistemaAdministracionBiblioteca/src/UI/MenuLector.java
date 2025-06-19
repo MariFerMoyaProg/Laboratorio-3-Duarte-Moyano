@@ -1,5 +1,5 @@
 
-package ui;
+package UI;
 
 import Biblioteca.*;
 import Excepcion.LibroNoDisponibleException;
@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuLector implements I_MostrableEnMenu {
-    private GestorLibros gestorLibros;
-    private GestorPrestamo gestorPrestamos;
-    private GestorReserva gestorReservas;
-    private Usuario usuario;
-    private Scanner scanner;
+    private final GestorLibros gestorLibros;
+    private final GestorPrestamo gestorPrestamos;
+    private final GestorReserva gestorReservas;
+    private final Usuario usuario;
+    private final Scanner scanner;
 
     public MenuLector(GestorLibros gl, GestorPrestamo gp, GestorReserva gr, Usuario usuario, Scanner scanner) {
         this.gestorLibros = gl;

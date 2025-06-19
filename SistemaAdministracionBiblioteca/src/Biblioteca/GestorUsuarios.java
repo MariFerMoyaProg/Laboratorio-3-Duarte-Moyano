@@ -1,31 +1,58 @@
 package Biblioteca;
 
-
 import Excepcion.UsuarioNoEncontradoException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GestorUsuarios {
-    private List<Usuario> usuarios;
+    private final List<Usuario> usuarios;
 
     public GestorUsuarios() {
         usuarios = new ArrayList<>();
     }
 
     public void agregarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
+        if (usuario != null) {
+            usuarios.add(usuario);
+        }
     }
 
     public Usuario buscarUsuarioPorDni(String dni) throws UsuarioNoEncontradoException {
+        if (dni == null) {
+            throw new IllegalArgumentException("El DNI no puede ser null");
+        }
+        System.out.println("Buscando usuario con DNI: " + dni);
         for (Usuario u : usuarios) {
-            if (u.getDni().equals(dni)) {
+            System.out.println("Comparando con: " + u.getDni());
+            if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
                 return u;
             }
         }
-        throw new UsuarioNoEncontradoException("No se encontró usuario con DNI: " + dni);
+        throw new UsuarioNoEncontradoException("Usuario no encontrado con DNI: " + dni);
     }
 
     public List<Usuario> getUsuarios() {
         return usuarios;
+    }
+
+    public Usuario autenticar(String nombre, String contrasena) throws Exception {
+        if (nombre == null) {
+            return null;
+        }
+        for (Usuario u : usuarios) {
+            if (u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombre)) {
+                if (u instanceof Administrador) {
+                    Administrador admin = (Administrador) u;
+                    if (admin.getContrasenia() != null && admin.getContrasenia().equals(contrasena)) {
+                        return admin;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return u; // Otros usuarios no requieren contraseña?
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,12 +1,15 @@
 package Biblioteca;
 
+import Enum.TipoUsuario;
+
 public class Administrador extends Usuario {
 
-
-    /// Cobnstructor
+    /// Constructor
     public Administrador(String nombre, String dni) {
         super(nombre, dni);
+        this.setTipo(TipoUsuario.ADMINISTRADOR);
     }
+
 
     /// Implementacion de metodo
     @Override
