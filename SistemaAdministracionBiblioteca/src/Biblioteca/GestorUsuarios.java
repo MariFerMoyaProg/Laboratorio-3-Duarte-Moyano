@@ -16,25 +16,14 @@ public class GestorUsuarios {
             usuarios.add(usuario);
         }
     }
-    public boolean agregarUsuario(Usuario usuario) {
-        try {
-            buscarUsuarioPorDni(usuario.getDni());
-            System.out.println("Ya existe un usuario con ese DNI.");
-            return false;
-        } catch (UsuarioNoEncontradoException e) {
-            usuarios.add(usuario);
-            return true;
-    }
-
 
     public Usuario buscarUsuarioPorDni(String dni) throws UsuarioNoEncontradoException {
         if (dni == null) {
             throw new IllegalArgumentException("El DNI no puede ser null");
         }
-        System.out.println("Buscando usuario con DNI: " + dni);
+        ///System.out.println("Buscando usuario con DNI: " + dni);
         for (Usuario u : usuarios) {
-            System.out.println("Comparando con: " + u.getDni());
-            if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
+              if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
                 return u;
             }
         }

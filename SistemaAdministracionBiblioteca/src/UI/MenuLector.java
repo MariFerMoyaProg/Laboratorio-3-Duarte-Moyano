@@ -3,97 +3,114 @@ package UI;
 
 import Biblioteca.*;
 import Excepcion.LibroNoDisponibleException;
-import Interface.I_MostrableEnMenu;
+import Excepcion.LibroNoEncontradoExcepcion;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Scanner;
 
-public class MenuLector implements I_MostrableEnMenu {
+public class MenuLector {
+
     private final GestorLibros gestorLibros;
     private final GestorPrestamo gestorPrestamos;
     private final GestorReserva gestorReservas;
-    private final Usuario usuario;
+    private final Usuario lector;
     private final Scanner scanner;
 
-    public MenuLector(GestorLibros gl, GestorPrestamo gp, GestorReserva gr, Usuario usuario, Scanner scanner) {
-        this.gestorLibros = gl;
-        this.gestorPrestamos = gp;
-        this.gestorReservas = gr;
-        this.usuario = usuario;
+    public MenuLector(GestorLibros gestorLibros, GestorPrestamo gestorPrestamos,
+                      GestorReserva gestorReservas, Usuario lector, Scanner scanner) {
+        this.gestorLibros = gestorLibros;
+        this.gestorPrestamos = gestorPrestamos;
+        this.gestorReservas = gestorReservas;
+        this.lector = lector;
         this.scanner = scanner;
     }
 
-    @Override
     public void ejecutarMenu() {
         while (true) {
             System.out.println("\n--- Menú Lector ---");
-            System.out.println("1. Buscar libros");
-            System.out.println("2. Ver mis préstamos");
-            System.out.println("3. Reservar libro");
-            System.out.println("4. Volver");
+            System.out.println("1. Retirar libro");
+            System.out.println("2. Reservar libro para fecha futura");
+            System.out.println("3. Volver");
             System.out.print("Seleccione opción: ");
             String opcion = scanner.nextLine();
+
             switch (opcion) {
                 case "1":
-                    buscarLibros();
+                    retirarLibro();
                     break;
                 case "2":
-                    verMisPrestamos();
+                    reservarLibroFuturo();
                     break;
                 case "3":
-                    reservarLibro();
-                    break;
-                case "4":
                     return;
                 default:
-                    System.out.println("Opción inválida");
-                    break;
+                    System.out.println("Opción inválida.");
             }
         }
     }
 
-    private void buscarLibros() {
-        System.out.print("Ingrese criterio de búsqueda: ");
-        String criterio = scanner.nextLine();
 
-        List<Libro> encontrados = gestorLibros.buscarLibros(criterio);
-        if (encontrados.isEmpty()) {
-            System.out.println("No se encontraron libros que coincidan.");
-        } else {
-            System.out.println("Libros encontrados:");
-            for (Libro libro : encontrados) {
-                System.out.println(libro);
-            }
-        }
-    }
-
-    private void verMisPrestamos() {
-        System.out.println("Tus préstamos:");
-        List<Prestamo> prestamos = gestorPrestamos.prestamosPorUsuario(usuario);
-        if (prestamos.isEmpty()) {
-            System.out.println("No tienes préstamos activos.");
-        } else {
-            for (Prestamo p : prestamos) {
-                System.out.println(p);
-            }
-        }
-    }
-
-    private void reservarLibro() {
+    private void reservarLibroFuturo() {
+        System.out.print("Ingrese título del libro: ");
+        String titulo = scanner.nextLine();
+        Libro libro = null;
         try {
-            System.out.print("Título del libro para reservar: ");
-            String titulo = scanner.nextLine();
-            Libro libro = gestorLibros.buscarLibroPorTitulo(titulo);
-            if (!libro.estaDisponible()) {
-                Reserva reserva = new Reserva(libro, usuario, LocalDate.now());
-                gestorReservas.agregarReserva(reserva);
-                System.out.println("Reserva realizada exitosamente.");
+            libro = gestorLibros.buscarLibroPorTitulo(titulo);
+        } catch (LibroNoEncontradoExcepcion e) {
+            throw new RuntimeException(e);
+        }
+
+        if (libro == null) {
+            System.out.println("Libro no encontrado.");
+            return;
+        }
+
+        System.out.print("Ingrese fecha para reserva (YYYY-MM-DD): ");
+        String fechaInput = scanner.nextLine();
+        try {
+            LocalDate fechaReserva = LocalDate.parse(fechaInput);
+
+            if (gestorReservas.estaReservadoEnFecha(libro, fechaReserva)) {
+                System.out.println("El libro ya está reservado en esa fecha.");
             } else {
-                System.out.println("El libro está disponible, no es necesario reservar.");
+                gestorReservas.agregarReserva(new Reserva(libro, lector, fechaReserva));
+                System.out.println("Reserva realizada con éxito.");
             }
-        } catch (LibroNoDisponibleException e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Fecha inválida o error al realizar la reserva.");
+        }
+    }
+
+
+    private void retirarLibro() {
+        System.out.print("Ingrese título del libro: ");
+        String titulo = scanner.nextLine();
+        Libro libro = null;
+        try {
+            libro = gestorLibros.buscarLibroPorTitulo(titulo);
+        } catch (LibroNoEncontradoExcepcion e) {
+            throw new RuntimeException(e);
+        }
+
+        if (libro == null) {
+            System.out.println("Libro no encontrado.");
+            return;
+        }
+
+        if (libro.estaDisponible()) {
+            try {
+                gestorPrestamos.registrarPrestamo(libro, lector);
+                libro.setDisponible(false);
+                System.out.println("Libro retirado con éxito.");
+            } catch (LibroNoDisponibleException e) {
+                System.out.println("El libro no está disponible: " + e.getMessage());
+            }
+        } else {
+            System.out.println("El libro no está disponible. ¿Desea reservarlo? (s/n): ");
+            String respuesta = scanner.nextLine();
+            if (respuesta.equalsIgnoreCase("s")) {
+                reservarLibroFuturo();
+            }
         }
     }
 }

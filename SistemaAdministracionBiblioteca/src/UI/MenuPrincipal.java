@@ -2,6 +2,7 @@ package UI;
 
 import Biblioteca.*;
 import Enum.TipoUsuario;
+import Excepcion.LibroNoDisponibleException;
 import Excepcion.UsuarioNoEncontradoException;
 import Interface.I_MostrableEnMenu;
 import Persistencia.ExportadorJson;
@@ -45,7 +46,13 @@ public class MenuPrincipal implements I_MostrableEnMenu {
             List<Libro> librosDesdeJson = ImportadorJson.importarLibros("libros.json");
             gestorLibros.getLibros().clear();
             gestorLibros.getLibros().addAll(ImportadorJson.importarLibros("libros.json"));
-            gestorPrestamos.getPrestamos().addAll(ImportadorJson.importarPrestamos("prestamos.json", gestorLibros, gestorUsuarios));
+            try {
+                gestorPrestamos.getPrestamos().addAll(ImportadorJson.importarPrestamos("prestamos.json", gestorLibros, gestorUsuarios));
+            } catch (LibroNoDisponibleException e) {
+                throw new RuntimeException(e);
+            } catch (UsuarioNoEncontradoException e) {
+                throw new RuntimeException(e);
+            }
             gestorReservas.getReservas().addAll(ImportadorJson.importarReservas("reservas.json", gestorLibros, gestorUsuarios));
         } catch (IOException e) {
             System.out.println("Error al cargar datos: " + e.getMessage());
@@ -59,9 +66,8 @@ public class MenuPrincipal implements I_MostrableEnMenu {
                 .anyMatch(u -> u instanceof Administrador && u.getDni().equals("12345678"));
 
         if (!existeAdmin) {
-            Administrador admin = new Administrador("Admin", "12345678");
+            Administrador admin = new Administrador("Admin", "12345678","Fantastica","12345","clave123");
             gestorUsuarios.agregarUsuario(admin);
-            System.out.println("Administrador por defecto creado (DNI: 12345678).");
         }
     }
 
@@ -114,7 +120,7 @@ public class MenuPrincipal implements I_MostrableEnMenu {
                                 new MenuAdministrador(gestorUsuarios, gestorLibros, gestorPrestamos, gestorReservas, scanner).ejecutarMenu();
                                 break;
                             case BIBLIOTECARIO:
-                                new UI.MenuMiBibliotecario(gestorLibros, gestorPrestamos, gestorReservas, scanner).ejecutarMenu();
+                                new UI.MenuMiBibliotecario(gestorUsuarios, gestorLibros, gestorPrestamos, gestorReservas, scanner).ejecutarMenu();
                                 break;
                             case LECTOR:
                                 new UI.MenuLector(gestorLibros, gestorPrestamos, gestorReservas, usuario, scanner).ejecutarMenu();

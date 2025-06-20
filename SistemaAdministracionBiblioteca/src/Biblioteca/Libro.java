@@ -4,12 +4,11 @@ import Enum.Genero;
 import Interface.I_Buscable;
 import Interface.Prestamoable;
 
-
 public  class Libro implements I_Buscable, Prestamoable {
     private final String titulo;
     private final String autor;
     private final Genero genero;
-    private  boolean disponible;
+    private  boolean disponible= true;
 
     public Libro(String titulo, String autor, Genero genero) {
         this.titulo = titulo;
@@ -35,15 +34,12 @@ public  class Libro implements I_Buscable, Prestamoable {
         this.disponible = disponible;
     }
 
-
     @Override
     public boolean coincide(String criterio) {
         return titulo.toLowerCase().contains(criterio.toLowerCase()) ||
                 autor.toLowerCase().contains(criterio.toLowerCase()) ||
                 genero.name().equalsIgnoreCase(criterio);
     }
-
-
 
     public void prestar(){
         if(!disponible){

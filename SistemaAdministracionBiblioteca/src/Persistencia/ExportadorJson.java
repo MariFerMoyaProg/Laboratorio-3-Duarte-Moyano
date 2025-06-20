@@ -1,6 +1,7 @@
 package Persistencia;
 
 import Biblioteca.*;
+import Util.RuntimeTypeAdapterFactory;
 import com.google.gson.*;
 
 
@@ -10,9 +11,25 @@ import java.util.List;
 
 public class ExportadorJson {
 
+    //public static void exportarUsuarios(List<Usuario> usuarios, String rutaArchivo) throws IOException {
+      //  try (Writer writer = new FileWriter(rutaArchivo)) {
+        //    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+          //  gson.toJson(usuarios, writer);
+        //}
+    //}
     public static void exportarUsuarios(List<Usuario> usuarios, String rutaArchivo) throws IOException {
+        RuntimeTypeAdapterFactory<Usuario> adapter = RuntimeTypeAdapterFactory
+                .of(Usuario.class, "clase")
+                .registerSubtype(Administrador.class, "ADMINISTRADOR")
+                .registerSubtype(Bibliotecario.class, "BIBLIOTECARIO")
+                .registerSubtype(Lector.class, "LECTOR");
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapterFactory(adapter)
+                .setPrettyPrinting()
+                .create();
+
         try (Writer writer = new FileWriter(rutaArchivo)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(usuarios, writer);
         }
     }

@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "titulo": "HARRY POTTER Y EL CALIZ DE FUEGO",
+    "autor": "JK ROWLING",
+    "genero": "FANTASIA",
+    "disponible": true
+  },
+  {
+    "titulo": "CAZADORES DE SOMBRAS",
+    "autor": "CASSANDRA CLARE",
+    "genero": "FANTASIA",
+    "disponible": true
+  }
+]
