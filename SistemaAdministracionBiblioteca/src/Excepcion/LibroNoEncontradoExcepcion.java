@@ -1,3 +1,4 @@
+
 package Excepcion;
 
 public class LibroNoEncontradoExcepcion extends Exception {

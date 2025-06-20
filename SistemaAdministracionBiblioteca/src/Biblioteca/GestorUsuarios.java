@@ -23,7 +23,9 @@ public class GestorUsuarios {
         }
         ///System.out.println("Buscando usuario con DNI: " + dni);
         for (Usuario u : usuarios) {
-              if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
+
+            if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
+
                 return u;
             }
         }
@@ -35,23 +37,25 @@ public class GestorUsuarios {
     }
 
     public Usuario autenticar(String nombre, String contrasena) throws Exception {
-        if (nombre == null) {
-            return null;
-        }
+
+        /// Convierte en mayuscula el nombre ingresado
+        String nombreMayuscula = nombre.toUpperCase();
+
         for (Usuario u : usuarios) {
-            if (u.getNombre() != null && u.getNombre().equalsIgnoreCase(nombre)) {
+            if (u.getNombre().toUpperCase().equals(nombreMayuscula)) {
                 if (u instanceof Administrador) {
                     Administrador admin = (Administrador) u;
-                    if (admin.getContrasenia() != null && admin.getContrasenia().equals(contrasena)) {
+                    if (admin.getContrasenia().equals(contrasena)) {
                         return admin;
                     } else {
                         return null;
                     }
                 } else {
-                    return u; // Otros usuarios no requieren contraseña?
+                    return u;
                 }
             }
         }
         return null;
     }
 }
+
