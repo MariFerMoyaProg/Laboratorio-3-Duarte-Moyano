@@ -5,7 +5,9 @@ import Biblioteca.*;
 import Enum.TipoUsuario;
 import Interface.I_MostrableEnMenu;
 import Enum.Genero;
+import Persistencia.ExportadorJson;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MenuAdministrador implements I_MostrableEnMenu {
@@ -54,6 +56,7 @@ public class MenuAdministrador implements I_MostrableEnMenu {
                     System.out.println("Opción inválida");
                     break;
             }
+            guardarDatos1();
         }
     }
 
@@ -77,6 +80,9 @@ public class MenuAdministrador implements I_MostrableEnMenu {
         System.out.print("Tipo de usuario (ADMINISTRADOR, BIBLIOTECARIO, LECTOR): ");
         String tipoStr = scanner.nextLine().toUpperCase();
 
+        System.out.print("Contrasenia: ");
+        String contrasenia = scanner.nextLine();
+
         Usuario usuario = null;
 
         try {
@@ -84,13 +90,13 @@ public class MenuAdministrador implements I_MostrableEnMenu {
 
             switch (tipo) {
                 case ADMINISTRADOR:
-                    usuario = new Administrador(nombre, dni);
+                    usuario = new Administrador(nombre, dni,direccion,contacto,contrasenia);
                     break;
                 case BIBLIOTECARIO:
-                    usuario = new Bibliotecario(nombre, dni, direccion, contacto, tipo);
+                    usuario = new Bibliotecario(nombre, dni, direccion, contacto, contrasenia);
                     break;
                 case LECTOR:
-                    usuario = new Lector(nombre, dni);
+                    usuario = new Lector(nombre, dni,direccion,contacto,contrasenia);
                     break;
                 default:
                     System.out.println("Tipo de usuario inválido.");
@@ -100,23 +106,11 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             if (usuario != null) {
                 gestorUsuarios.agregarUsuario(usuario);
                 System.out.println("Usuario registrado con éxito.");
+               /// guardarDatos1();
             } else {
                 System.out.println("No se pudo crear el usuario.");
             }
 
-            TipoUsuario tipo = TipoUsuario.valueOf(tipoStr.toUpperCase());
-            Usuario usuario = new Usuario(nombre, dni, direccion, contacto, tipo) {
-                @Override
-                public void ejecutarMenu() {
-
-                }
-            };
-            boolean agregado = gestorUsuarios.agregarUsuario(usuario);
-            if (agregado) {
-                System.out.println("Usuario registrado con exito.");
-            } else {
-                System.out.println("Ya existe un usuario con ese DNI.");
-            }
         } catch (IllegalArgumentException e) {
             System.out.println("Tipo de usuario inválido.");
         } catch (Exception ex) {
@@ -144,17 +138,26 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             Libro libro = new Libro(titulo, autor, genero);
             gestorLibros.agregarLibro(libro);
             System.out.println("Libro registrado con éxito.");
+            ///guardarDatos1();
         } catch (IllegalArgumentException e) {
             System.out.println("Género inválido.");
         }
     }
-    
 
-
-        private void listarLibros() {
+    private void listarLibros() {
         System.out.println("\nLibros registrados:");
         for (Libro libro : gestorLibros.getLibros()) {
             System.out.println(libro);
         }
     }
-}
+
+private void guardarDatos1() {
+    try {
+        ExportadorJson.exportarUsuarios(gestorUsuarios.getUsuarios(), "usuarios.json");
+        ExportadorJson.exportarLibros(gestorLibros.getLibros(), "libros.json");
+        ExportadorJson.exportarPrestamos(gestorPrestamo.getPrestamos(), "prestamos.json");
+        ExportadorJson.exportarReservas(gestorReserva.getReservas(), "reservas.json");
+    } catch (IOException e) {
+        System.out.println("Error al guardar datos: " + e.getMessage());
+    }
+}}

@@ -1,6 +1,7 @@
 package Biblioteca;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,5 +29,15 @@ import java.util.List;
             }
             return resultado;
         }
+
+        public boolean estaReservadoEnFecha(Libro libro, LocalDate fecha) {
+            for (Reserva reserva : reservas) {
+                if (reserva.getLibro().equals(libro) && reserva.getFechaReserva().equals(fecha)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 
