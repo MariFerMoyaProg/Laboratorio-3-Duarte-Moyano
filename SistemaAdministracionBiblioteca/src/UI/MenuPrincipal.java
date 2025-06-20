@@ -66,9 +66,8 @@ public class MenuPrincipal implements I_MostrableEnMenu {
                 .anyMatch(u -> u instanceof Administrador && u.getDni().equals("12345678"));
 
         if (!existeAdmin) {
-            Administrador admin = new Administrador("Admin", "12345678");
+            Administrador admin = new Administrador("Admin", "12345678","Fantastica","12345","clave123");
             gestorUsuarios.agregarUsuario(admin);
-            System.out.println("Administrador por defecto creado (DNI: 12345678).");
         }
     }
 

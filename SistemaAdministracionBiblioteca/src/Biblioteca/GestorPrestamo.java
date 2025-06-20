@@ -10,6 +10,7 @@ public class GestorPrestamo {
     private List<Prestamo> prestamos;
 
     public GestorPrestamo() {
+
         prestamos = new ArrayList<>();
     }
 
@@ -24,6 +25,7 @@ public class GestorPrestamo {
     }
 
     public List<Prestamo> getPrestamos() {
+
         return prestamos;
     }
 
@@ -47,11 +49,12 @@ public class GestorPrestamo {
         }
         return true;
     }
+
     public void registrarPrestamo(Libro libro, Usuario usuario) throws LibroNoDisponibleException {
         if (!libro.estaDisponible()) {
             throw new LibroNoDisponibleException("El libro no está disponible para préstamo.");
         }
-        Prestamo nuevoPrestamo = new Prestamo(libro, usuario, LocalDate.now(), null); // o con fecha devolución que corresponda
+        Prestamo nuevoPrestamo = new Prestamo(libro, usuario, LocalDate.now(), LocalDate.now().plusWeeks(1)); // o con fecha devolución que corresponda
         prestamos.add(nuevoPrestamo);
         libro.setDisponible(false);
     }

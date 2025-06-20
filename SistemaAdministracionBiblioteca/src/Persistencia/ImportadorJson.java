@@ -25,7 +25,7 @@ public class ImportadorJson {
 
     static {
         RuntimeTypeAdapterFactory<Usuario> adapter = RuntimeTypeAdapterFactory
-                .of(Usuario.class, "tipo")
+                .of(Usuario.class, "clase")
                 .registerSubtype(Administrador.class, "ADMINISTRADOR")
                 .registerSubtype(Bibliotecario.class, "BIBLIOTECARIO")
                 .registerSubtype(Lector.class, "LECTOR");

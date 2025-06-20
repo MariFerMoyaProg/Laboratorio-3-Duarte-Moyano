@@ -1,3 +1,27 @@
 [
-
+  {
+    "nombre": "Admin",
+    "dni": "12345678",
+    "direccion": "No especificada",
+    "contacto": "No especificado",
+    "tipo": "ADMINISTRADOR",
+    "clase": "ADMINISTRADOR"
+  },
+  {
+    "nombre": "Carla",
+    "dni": "39809964",
+    "direccion": "No especificada",
+    "contacto": "No especificado",
+    "tipo": "LECTOR",
+    "clase": "LECTOR"
+  },
+  {
+    "nombre": "Carli",
+    "dni": "11111111",
+    "direccion": "v 2667",
+    "contacto": "12345",
+    "tipo": "BIBLIOTECARIO",
+    "contrasenia": "clave123",
+    "clase": "BIBLIOTECARIO"
+  }
 ]

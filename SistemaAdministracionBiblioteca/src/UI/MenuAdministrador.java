@@ -3,9 +3,13 @@ package UI;
 import Biblioteca.Libro;
 import Biblioteca.*;
 import Enum.TipoUsuario;
+import Excepcion.NombreInvalidoException;
 import Interface.I_MostrableEnMenu;
 import Enum.Genero;
+import Persistencia.ExportadorJson;
+import Validaciones.ValidadorUsuario;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MenuAdministrador implements I_MostrableEnMenu {
@@ -54,12 +58,37 @@ public class MenuAdministrador implements I_MostrableEnMenu {
                     System.out.println("Opción inválida");
                     break;
             }
+            guardarDatos1();
         }
     }
 
     private void registrarUsuario() {
         System.out.print("Nombre: ");
         String nombre = scanner.nextLine();
+
+        ///  En este try ctch al momento de registrar si es valido podremos continuar con el registro
+        /// sino, volvera a pedir el nombre o cancelar el registro
+        while (true) {
+            System.out.print("Ingrese el nombre del nuevo usuario " +
+                    "(o escriba 'volver' para regresar): ");
+            nombre = scanner.nextLine();
+
+            if (nombre.equalsIgnoreCase("volver")) {
+                System.out.println("Volviendo al menú anterior...");
+                return;
+            }
+
+            try {
+                ValidadorUsuario.validarNombre(nombre);
+                /// convertimos el nombre en mayuscula
+                nombre = nombre.toUpperCase();
+                break;
+            } catch (NombreInvalidoException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+
+
 
         System.out.print("DNI (7 u 8 dígitos): ");
         String dni = scanner.nextLine();
@@ -77,6 +106,9 @@ public class MenuAdministrador implements I_MostrableEnMenu {
         System.out.print("Tipo de usuario (ADMINISTRADOR, BIBLIOTECARIO, LECTOR): ");
         String tipoStr = scanner.nextLine().toUpperCase();
 
+        System.out.print("Contrasenia: ");
+        String contrasenia = scanner.nextLine();
+
         Usuario usuario = null;
 
         try {
@@ -84,13 +116,13 @@ public class MenuAdministrador implements I_MostrableEnMenu {
 
             switch (tipo) {
                 case ADMINISTRADOR:
-                    usuario = new Administrador(nombre, dni);
+                    usuario = new Administrador(nombre, dni,direccion,contacto,contrasenia);
                     break;
                 case BIBLIOTECARIO:
-                    usuario = new Bibliotecario(nombre, dni, direccion, contacto, tipo);
+                    usuario = new Bibliotecario(nombre, dni, direccion, contacto, contrasenia);
                     break;
                 case LECTOR:
-                    usuario = new Lector(nombre, dni);
+                    usuario = new Lector(nombre, dni,direccion,contacto,contrasenia);
                     break;
                 default:
                     System.out.println("Tipo de usuario inválido.");
@@ -100,6 +132,7 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             if (usuario != null) {
                 gestorUsuarios.agregarUsuario(usuario);
                 System.out.println("Usuario registrado con éxito.");
+               /// guardarDatos1();
             } else {
                 System.out.println("No se pudo crear el usuario.");
             }
@@ -131,6 +164,7 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             Libro libro = new Libro(titulo, autor, genero);
             gestorLibros.agregarLibro(libro);
             System.out.println("Libro registrado con éxito.");
+            ///guardarDatos1();
         } catch (IllegalArgumentException e) {
             System.out.println("Género inválido.");
         }
@@ -142,4 +176,14 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             System.out.println(libro);
         }
     }
-}
+
+private void guardarDatos1() {
+    try {
+        ExportadorJson.exportarUsuarios(gestorUsuarios.getUsuarios(), "usuarios.json");
+        ExportadorJson.exportarLibros(gestorLibros.getLibros(), "libros.json");
+        ExportadorJson.exportarPrestamos(gestorPrestamo.getPrestamos(), "prestamos.json");
+        ExportadorJson.exportarReservas(gestorReserva.getReservas(), "reservas.json");
+    } catch (IOException e) {
+        System.out.println("Error al guardar datos: " + e.getMessage());
+    }
+}}
