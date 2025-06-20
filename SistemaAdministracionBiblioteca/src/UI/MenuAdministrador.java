@@ -137,6 +137,19 @@ public class MenuAdministrador implements I_MostrableEnMenu {
                 System.out.println("No se pudo crear el usuario.");
             }
 
+            TipoUsuario tipo = TipoUsuario.valueOf(tipoStr.toUpperCase());
+            Usuario usuario = new Usuario(nombre, dni, direccion, contacto, tipo) {
+                @Override
+                public void ejecutarMenu() {
+
+                }
+            };
+            boolean agregado = gestorUsuarios.agregarUsuario(usuario);
+            if (agregado) {
+                System.out.println("Usuario registrado con exito.");
+            } else {
+                System.out.println("Ya existe un usuario con ese DNI.");
+            }
         } catch (IllegalArgumentException e) {
             System.out.println("Tipo de usuario inválido.");
         } catch (Exception ex) {
@@ -169,8 +182,10 @@ public class MenuAdministrador implements I_MostrableEnMenu {
             System.out.println("Género inválido.");
         }
     }
+    
 
-    private void listarLibros() {
+
+        private void listarLibros() {
         System.out.println("\nLibros registrados:");
         for (Libro libro : gestorLibros.getLibros()) {
             System.out.println(libro);
