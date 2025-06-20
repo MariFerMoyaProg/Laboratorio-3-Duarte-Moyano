@@ -16,16 +16,6 @@ public class GestorUsuarios {
             usuarios.add(usuario);
         }
     }
-    public boolean agregarUsuario(Usuario usuario) {
-        try {
-            buscarUsuarioPorDni(usuario.getDni());
-            System.out.println("Ya existe un usuario con ese DNI.");
-            return false;
-        } catch (UsuarioNoEncontradoException e) {
-            usuarios.add(usuario);
-            return true;
-    }
-
 
     public Usuario buscarUsuarioPorDni(String dni) throws UsuarioNoEncontradoException {
         if (dni == null) {
@@ -33,7 +23,9 @@ public class GestorUsuarios {
         }
         ///System.out.println("Buscando usuario con DNI: " + dni);
         for (Usuario u : usuarios) {
+
             if (u.getDni() != null && u.getDni().equalsIgnoreCase(dni)) {
+
                 return u;
             }
         }

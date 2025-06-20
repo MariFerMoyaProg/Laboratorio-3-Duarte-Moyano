@@ -15,7 +15,9 @@ public abstract class Usuario implements I_MostrableEnMenu {
 
 
     public Usuario(String nombre, String dni, String direccion, String contacto, TipoUsuario tipo, String contrasenia) {
+
         this.nombre = nombre.toUpperCase();
+
         if (!dni.matches("\\d{7,8}")) {
             throw new IllegalArgumentException("El DNI debe contener 7 u 8 dígitos");}
         this.dni = dni;
@@ -24,6 +26,7 @@ public abstract class Usuario implements I_MostrableEnMenu {
         this.tipo = tipo;
         this.contrasenia = contrasenia;
     }
+
 
 
     public Usuario(String nombre, String dni) {
@@ -37,13 +40,25 @@ public abstract class Usuario implements I_MostrableEnMenu {
         this.tipo = null; // o asignar un valor por defecto si querés
     }
 
-    public Usuario(String nombre, String dni, String direccion, String contacto, TipoUsuario tipo) {
-        this.nombre = nombre;
-        this.dni = dni;
-        this.direccion = direccion;
-        this.contacto = contacto;
-        this.tipo = tipo;
-    }
+    /// Constructor
+    ///public Usuario(String nombre, String dni) {
+       /// if (!dni.matches("\\d{7,8}")) {
+          ///  throw new IllegalArgumentException("El DNI debe contener 7 u 8 dígitos");
+        //}
+        //this.nombre = nombre;
+        //this.dni = dni;
+        //this.direccion = "No especificada";
+        //this.contacto = "No especificado";
+        //this.tipo = null; // o asignar un valor por defecto si querés
+    //}
+
+    ///public Usuario(String nombre, String dni, String direccion, String contacto, TipoUsuario tipo) {
+       // this.nombre = nombre;
+        //this.dni = dni;
+        //this.direccion = direccion;
+        //this.contacto = contacto;
+        //this.tipo = tipo;
+    //}
 
 
 

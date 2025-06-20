@@ -4,15 +4,10 @@ import Enum.TipoUsuario;
 
 public class Administrador extends Usuario {
 
-  
     public Administrador(String nombre, String dni, String direccion, String contacto, String contrasenia) {
         super(nombre, dni, direccion, contacto, TipoUsuario.ADMINISTRADOR, contrasenia);
     }
 
-
-
-   
-    /// Implementacion de metodo
 
     @Override
     public void ejecutarMenu() {
